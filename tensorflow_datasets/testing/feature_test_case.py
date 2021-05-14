@@ -34,16 +34,15 @@ from tensorflow_datasets.testing import test_utils
 class FeatureExpectationItem(object):
   """Test item of a FeatureExpectation."""
 
-  def __init__(
-      self,
-      value,
-      expected=None,
-      expected_serialized=None,
-      decoders=None,
-      dtype=None,
-      shape=None,
-      raise_cls=None,
-      raise_msg=None):
+  def __init__(self,
+               value,
+               expected=None,
+               expected_serialized=None,
+               decoders=None,
+               dtype=None,
+               shape=None,
+               raise_cls=None,
+               raise_msg=None):
     self.value = value
     self.expected = expected
     self.expected_serialized = expected_serialized
@@ -118,15 +117,14 @@ class FeatureExpectationsTestCase(SubTestCase):
   """Tests FeatureExpectations with full encode-decode."""
 
   @test_utils.run_in_graph_and_eager_modes()
-  def assertFeature(
-      self,
-      feature,
-      shape,
-      dtype,
-      tests,
-      serialized_info=None,
-      skip_feature_tests=False,
-      test_attributes=None):
+  def assertFeature(self,
+                    feature,
+                    shape,
+                    dtype,
+                    tests,
+                    serialized_info=None,
+                    skip_feature_tests=False,
+                    test_attributes=None):
     """Test the given feature against the predicates."""
     self.assertFeatureEagerOnly(feature, shape, dtype, tests, serialized_info,
                                 skip_feature_tests, test_attributes)
@@ -169,15 +167,14 @@ class FeatureExpectationsTestCase(SubTestCase):
             test_attributes=test_attributes,
         )
 
-  def _assert_feature(
-      self,
-      feature,
-      shape,
-      dtype,
-      tests,
-      serialized_info=None,
-      skip_feature_tests=False,
-      test_attributes=None):
+  def _assert_feature(self,
+                      feature,
+                      shape,
+                      dtype,
+                      tests,
+                      serialized_info=None,
+                      skip_feature_tests=False,
+                      test_attributes=None):
     with self._subTest('shape'):
       self.assertEqual(feature.shape, shape)
     with self._subTest('dtype'):
@@ -221,8 +218,8 @@ class FeatureExpectationsTestCase(SubTestCase):
           raise ValueError(
               'test.raise_msg should be set with {} for test {}'.format(
                   test.raise_cls, type(feature)))
-        with self.assertRaisesWithPredicateMatch(
-            test.raise_cls, test.raise_msg):
+        with self.assertRaisesWithPredicateMatch(test.raise_cls,
+                                                 test.raise_msg):
           features_encode_decode(fdict, input_value, decoders=test.decoders)
     else:
       # Test the serialization only
@@ -274,9 +271,8 @@ class FeatureExpectationsTestCase(SubTestCase):
         # Assert value
         with self._subTest('out_value'):
           # Eventually construct the tf.RaggedTensor
-          expected = tf.nest.map_structure(
-              lambda t: t.build() if isinstance(t, RaggedConstant) else t,
-              test.expected)
+          func = lambda t: t.build() if isinstance(t, RaggedConstant) else t
+          expected = tf.nest.map_structure(func, test.expected)
           self.assertAllEqualNested(out_numpy, expected)
 
         # Assert the HTML representation works
