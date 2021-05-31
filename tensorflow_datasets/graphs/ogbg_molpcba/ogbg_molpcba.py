@@ -43,6 +43,9 @@ All the molecules are pre-processed using RDKit ([1]).
    bond stereochemistry, as well as an additional bond feature indicating
    whether the bond is conjugated.
 
+The exact description of all features is available at
+https://github.com/snap-stanford/ogb/blob/master/ogb/utils/features.py.
+
 ### Prediction
 The task is to predict 128 different biological activities (inactive/active).
 See [2] and [3] for more description about these targets.
@@ -103,10 +106,11 @@ ReadOnlyPath = type_utils.ReadOnlyPath
 class OgbgMolpcba(tfds.core.GeneratorBasedBuilder):
   """DatasetBuilder for ogbg_molpcba dataset."""
 
-  VERSION = tfds.core.Version('0.1.1')
+  VERSION = tfds.core.Version('0.1.2')
   RELEASE_NOTES = {
       '0.1.0': 'Initial release of experimental API.',
       '0.1.1': 'Exposes the number of edges in each graph explicitly.',
+      '0.1.2': 'Add metadata field for GraphVisualizer.',
   }
 
   def _info(self) -> tfds.core.DatasetInfo:
@@ -133,6 +137,11 @@ class OgbgMolpcba(tfds.core.GeneratorBasedBuilder):
         supervised_keys=None,
         homepage=_OGB_URL,
         citation=_CITATION,
+        metadata=tfds.core.MetadataDict({
+            'graph_visualizer':
+                tfds.visualization.GraphVisualizerMetadataDict(
+                    edgelist_feature_name='edge_index')
+        }),
     )
 
   def _split_generators(self, dl_manager: tfds.download.DownloadManager):
